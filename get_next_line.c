@@ -6,7 +6,7 @@
 /*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 12:37:51 by odudniak          #+#    #+#             */
-/*   Updated: 2024/12/21 14:24:25 by odudniak         ###   ########.fr       */
+/*   Updated: 2024/12/21 14:51:25 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ static char	*append_string(char *str, char *buff, int newline_idx)
 	const int	str_size = ft_strlen(str);
 	int			buff_size;
 	char		*result;
-	int			i;
 
 	if (ft_strlen(buff) == 0)
 		return (str);
@@ -39,14 +38,8 @@ static char	*append_string(char *str, char *buff, int newline_idx)
 	result = ft_calloc(str_size + buff_size + 1, sizeof(char));
 	if (!result)
 		return (free(str), NULL);
-	i = -1;
-	while (++i < str_size)
-		result[i] = str[i];
-	while (i < str_size + buff_size)
-	{
-		result[i] = buff[i - str_size];
-		i++;
-	}
+	ft_memmove(result, str, str_size);
+	ft_memmove(result + str_size, buff, buff_size);
 	ft_memmove(buff, buff + buff_size,
 		(ft_strlen(buff) - (buff_size - newline_idx == -1)));
 	return (free(str), result);
