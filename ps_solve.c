@@ -63,16 +63,20 @@ static void	move_min_to_top(t_list **stack_a)
 
 void	solve(t_list **a, t_list **b)
 {
+	int		just_pushed;
 	int		a_len;
 	int		middle_val;
 
 	a_len = lst_size(*a);
 	middle_val = lst_middle_val(*a);
+	just_pushed = 0;
 	while (a_len > 3 && !lst_issorted(*a))
 	{
 		ps_push(a, b, PB);
-		if ((*b)->val > middle_val)
+		if ((*b)->val < middle_val && just_pushed > 0)
 			ps_rot(b, RB);
+		else
+			just_pushed++;
 		a_len--;
 	}
 	solve3(a);
