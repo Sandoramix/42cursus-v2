@@ -6,7 +6,7 @@
 /*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/20 15:22:33 by odudniak          #+#    #+#             */
-/*   Updated: 2023/12/30 17:02:57 by odudniak         ###   ########.fr       */
+/*   Updated: 2025/07/02 09:33:55 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,31 +16,32 @@ void	sl_destroytextures(t_game *game)
 {
 	int	i;
 
-	mlx_destroy_image(game->mlx, game->imgs.floor.image);
-	mlx_destroy_image(game->mlx, game->imgs.exit_ko.image);
-	mlx_destroy_image(game->mlx, game->imgs.exit_ok.image);
-	mlx_destroy_image(game->mlx, game->imgs.wall.image);
-	mlx_destroy_image(game->mlx, game->imgs.collectible.image);
-	mlx_destroy_image(game->mlx, game->imgs.enemy.image);
+	mlx_destroy_image(game->mlx, game->imgs.floor);
+	mlx_destroy_image(game->mlx, game->imgs.exit_ko);
+	mlx_destroy_image(game->mlx, game->imgs.exit_ok);
+	mlx_destroy_image(game->mlx, game->imgs.wall);
+	mlx_destroy_image(game->mlx, game->imgs.collectible);
+	mlx_destroy_image(game->mlx, game->imgs.enemy);
 	i = -1;
 	while (game->imgs.player_l[++i])
-		mlx_destroy_image(game->mlx, game->imgs.player_l[i]->image);
+		mlx_destroy_image(game->mlx, game->imgs.player_l[i]);
+	free(game->imgs.player_l);
 	i = -1;
 	while (game->imgs.player_r[++i])
-		mlx_destroy_image(game->mlx, game->imgs.player_r[i]->image);
-	ft_freemtx(game->imgs.player_l, ft_memmtxlen(game->imgs.player_l));
-	ft_freemtx(game->imgs.player_r, ft_memmtxlen(game->imgs.player_r));
+		mlx_destroy_image(game->mlx, game->imgs.player_r[i]);
+	free(game->imgs.player_r);
+	mlx_destroy_image(game->mlx, game->atlas);
 }
 
-t_img	sl_imggen(t_game *game, char *xpm_path)
+t_img	*sl_imggen(t_game *game, char *xpm_path)
 {
-	t_img	res;
+	int		width;
+	int		height;
+	t_img	*res;
 
-	res.height = SL_TILESIZE;
-	res.width = SL_TILESIZE;
-	res.image = mlx_xpm_file_to_image(game->mlx, xpm_path, &res.width,
-			&res.height);
-	if (!res.image)
+	res = mlx_xpm_file_to_image(game->mlx, xpm_path, &width,
+			&height);
+	if (!res)
 	{
 		ft_printf(COLOR_RED
 			"ERROR WHILE GENERATING TEXTURE located at [%s].\nAborting...\n"CR,
@@ -62,19 +63,9 @@ static t_img	**sl_gen_player_textures(t_game *game, char *filenames[])
 		ft_printf(COLOR_RED"MALLOC ERROR ON PLAYER TEXTURES.\nAborting...\n"CR);
 		sl_ondestroy(game);
 	}
-	res[len] = NULL;
 	i = -1;
 	while (++i < len)
-	{
-		res[i] = ft_calloc(1, sizeof(t_img));
-		if (!res[i])
-		{
-			ft_printf(COLOR_RED
-				"MALLOC ERROR ON PLAYER TEXTURES.\nAborting...\n"CR);
-			sl_ondestroy(game);
-		}
-		*(res[i]) = sl_imggen(game, filenames[i]);
-	}
+		res[i] = sl_imggen(game, filenames[i]);
 	return (res);
 }
 
@@ -109,27 +100,25 @@ void	sl_loadtextures(t_game *game)
 
 void	sl_puttexture(t_game *game, char id, int x, int y)
 {
-	const int			x_px = x * SL_TILESIZE;
-	const int			y_px = y * SL_TILESIZE;
-	XImage				*img;
+	t_img				*img;
 
 	if (id == PLAYER && game->meta.facing == FACE_RIGHT)
-		img = game->imgs.player_r[game->imgs.plr_idx]->image;
+		img = game->imgs.player_r[game->imgs.plr_idx];
 	else if (id == PLAYER && game->meta.facing == FACE_LEFT)
-		img = game->imgs.player_l[game->imgs.pll_idx]->image;
+		img = game->imgs.player_l[game->imgs.pll_idx];
 	else if (id == EXIT && !game->meta.collect_cty)
-		img = game->imgs.exit_ok.image;
+		img = game->imgs.exit_ok;
 	else if (id == EXIT)
-		img = game->imgs.exit_ko.image;
+		img = game->imgs.exit_ko;
 	else if (id == WALL)
-		img = game->imgs.wall.image;
+		img = game->imgs.wall;
 	else if (id == FLOOR)
-		img = game->imgs.floor.image;
+		img = game->imgs.floor;
 	else if (id == COLLECTIBLE)
-		img = game->imgs.collectible.image;
+		img = game->imgs.collectible;
 	else if (id == ENEMY)
-		img = game->imgs.enemy.image;
+		img = game->imgs.enemy;
 	else
 		return ;
-	mlx_put_image_to_window(game->mlx, game->window, img, x_px, y_px);
+	sl_draw_img(game, img, x, y);
 }

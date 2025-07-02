@@ -13,47 +13,40 @@ SRC= main.c \
 	./src/sl_enemies.c \
 	./src/sl_utils.c \
 	./src/sl_time.c \
-	./src/sl_bounds.c
-
-OBJ=$(SRC:.c=.o)
+	./src/sl_bounds.c \
+	./src/sl_draw.c
 
 # ----RULES-----
 
 CC=cc
-CFLAGS=-Wall -Wextra -Werror
-COMPILE=$(CC) $(CFLAGS) -g
-RM=rm -rf
 
 INCLUDES=-I/usr/include/X11 -I$(ROOTDIR)/includes -I$(LIBFTX_DIR)/includes -I$(MLX_DIR)
+CFLAGS=-Wall -Wextra -Werror $(INCLUDES) -g
+
+RM=rm -rf
+
 
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
+$(NAME): $(SRC)
 	$(MAKE) -C $(LIBFTX_DIR)
 	$(MAKE) -sC $(MLX_DIR) && echo "$(GREEN)[MLX]:\t\tLIBRARY CREATED"
-	$(COMPILE) $(INCLUDES) $(OBJ) -L$(LIBFTX_DIR) -lft -L$(MLX_DIR) -lmlx_$(shell uname) -lXext -lX11 -o $(NAME)
-	@echo "$(GREEN)[SO_LONG]:\tPROGRAM CREATED SUCCESSFULLY$(R)"
+	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) -L$(LIBFTX_DIR) -lft -L$(MLX_DIR) -lmlx_$(shell uname) -lXext -lX11 -o $@
+	@echo "$(GREEN)[SO_LONG]:\tPROGRAM CREATED$(R)"
 
 clean:
-	@$(RM) $(OBJ)
 	@$(MAKE) -iC $(MLX_DIR) clean || echo -n ""
 	@$(MAKE) -C $(LIBFTX_DIR) clean
 
 fclean: clean
 	$(MAKE) -C $(LIBFTX_DIR) fclean
-	@$(RM) $(MLX_DIR) && echo "$(GREEN)[MLX]:\t\tDELETED MINILIBX FOLDER!"
 	@$(RM) $(NAME)
 	@echo "$(BLUE)[SO_LONG]:\tPROGRAM DELETED$(R)"
 
 # --------------
 
-re: fclean download all
-
-# --------------
-
-%.o: %.c
-	@$(COMPILE) $(INCLUDES) -c $< -o $@
+re: fclean all
 
 # ----UTILS-----
 VALGRIND=@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --quiet --tool=memcheck --keep-debuginfo=yes
@@ -61,11 +54,18 @@ valgrind: all
 	@$(VALGRIND) ./$(NAME) $(mapfile)
 valgrindre: re valgrind
 
-download:
-	@wget https://cdn.intra.42.fr/document/document/21656/minilibx-linux.tgz
-	@tar -xf minilibx-linux.tgz
-	@mv minilibx-linux $(ROOTDIR)/minilibx
-	@$(RM) minilibx-linux.tgz
+MLX_LINK=https://github.com/42Paris/minilibx-linux/archive/refs/heads/master.zip
+download-mlx:
+	echo "$(BLUE) Downloading MLX...$(R)";
+	wget $(MLX_LINK) -O minilibx-linux.zip || (echo "$(RED)SOMETHING WENT WRONG WITH MLX LINK. PLEASE UPDATE IT$(R)"; exit 1)
+	unzip minilibx-linux.zip
+	mv minilibx-linux-master $(ROOTDIR)/minilibx
+	$(RM) minilibx-linux.zip*
+
+
+remove-mlx:
+	@$(RM) $(MLX_DIR) && echo "$(GREEN)[MLX]:\t\tDELETED MINILIBX FOLDER!"
+
 
 # ----OTHER-----
 .PHONY: all clean fclean re valgrind

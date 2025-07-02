@@ -4,3 +4,5 @@
 *.tmp*
 .vscode
 so_long
+
+src/minilibx

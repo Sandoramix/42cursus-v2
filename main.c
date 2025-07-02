@@ -6,7 +6,7 @@
 /*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 23:42:44 by odudniak          #+#    #+#             */
-/*   Updated: 2023/12/30 17:05:13 by odudniak         ###   ########.fr       */
+/*   Updated: 2025/07/02 09:36:33 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ int	sl_render(t_game *game)
 		while (++j < game->meta.map.size.x)
 			sl_puttexture(game, game->map[i][j], j, i);
 	}
+	mlx_put_image_to_window(game->mlx, game->window, game->atlas, 0, 0);
 	mlx_string_put(game->mlx, game->window, 5, 15, 0xf08155, "ESC: exit");
 	if (!game->meta.dead && !game->meta.game_finished)
 		mlx_string_put(game->mlx, game->window, 5, 30, 0xf08155,
@@ -75,6 +76,13 @@ int	sl_game_init(t_game *game)
 			game->meta.map.size.x * SL_TILESIZE,
 			game->meta.map.size.y * SL_TILESIZE,
 			"SO LONG");
+	game->atlas = mlx_new_image(game->mlx, game->meta.map.size.x * SL_TILESIZE,
+			game->meta.map.size.y * SL_TILESIZE);
+	if (!game->atlas)
+	{
+		ft_perror("Could not create atlas image\n");
+		sl_ondestroy(game);
+	}
 	mlx_hook(game->window, DestroyNotify, StructureNotifyMask, &sl_ondestroy,
 		game);
 	mlx_hook(game->window, KeyPress, KeyPressMask, &sl_onkeypressed, game);

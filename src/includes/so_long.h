@@ -6,7 +6,7 @@
 /*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 14:04:03 by odudniak          #+#    #+#             */
-/*   Updated: 2023/12/28 20:48:27 by odudniak         ###   ########.fr       */
+/*   Updated: 2025/07/02 10:18:41 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int			sl_onkeypressed(int key, t_game *game);
  * @param xpm_path path to `xpm` file
  * @return t_img the created image
  */
-t_img		sl_imggen(t_game *game, char *xpm_path);
+t_img		*sl_imggen(t_game *game, char *xpm_path);
 
 /**
  * @brief Free all loaded textures.
@@ -94,15 +94,10 @@ void		sl_destroytextures(t_game *game);
  * @param game
  */
 void		sl_loadtextures(t_game *game);
-/**
- * @brief Get the texture object by given ID (aka map cell value)
- *
- * @param game game data
- * @param id cell to retrieve
- * @return XImage*
- */
-XImage		*get_texture(t_game *game, char id);
 
+void		sl_draw_img(t_game *game, t_img *img, int x, int y);
+void		draw_on_atlas(t_game *game, t_img *img,
+				t_point a_pos, t_point tex_pos);
 void		sl_puttexture(t_game *game, char id, int x, int y);
 //!-------------------------------UTILS----------------------------------------
 /**

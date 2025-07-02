@@ -6,7 +6,7 @@
 /*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 22:40:57 by odudniak          #+#    #+#             */
-/*   Updated: 2023/12/30 16:58:41 by odudniak         ###   ########.fr       */
+/*   Updated: 2025/07/02 09:14:35 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ typedef struct s_meta
 
 typedef struct s_textures
 {
-	t_img	collectible;
+	t_img	*collectible;
 
 	t_img	**player_l;
 	int		pll_idx;
@@ -68,11 +68,11 @@ typedef struct s_textures
 	t_img	**player_r;
 	int		plr_idx;
 
-	t_img	enemy;
-	t_img	floor;
-	t_img	wall;
-	t_img	exit_ko;
-	t_img	exit_ok;
+	t_img	*enemy;
+	t_img	*floor;
+	t_img	*wall;
+	t_img	*exit_ko;
+	t_img	*exit_ok;
 }	t_textures;
 
 typedef struct s_game
@@ -82,6 +82,8 @@ typedef struct s_game
 
 	t_xvar		*mlx;
 	Window		*window;
+
+	t_img		*atlas;
 
 	t_textures	imgs;
 }	t_game;
