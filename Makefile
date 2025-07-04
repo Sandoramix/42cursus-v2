@@ -6,15 +6,17 @@ LIBFTX_DIR=$(ROOTDIR)/libftx
 MLX_DIR=$(ROOTDIR)/minilibx
 
 # --------------
-SRC= main.c \
-	./src/sl_events.c \
-	./src/sl_parse_map.c \
-	./src/sl_textures.c \
-	./src/sl_enemies.c \
-	./src/sl_utils.c \
-	./src/sl_time.c \
-	./src/sl_bounds.c \
-	./src/sl_draw.c
+SRC = ./main.c \
+	./src/enemies.c \
+	./src/messages.c \
+	./src/mlx_custom_draw.c \
+	./src/mlx_events.c \
+	./src/mlx_render.c \
+	./src/parsing/check_path.c \
+	./src/parsing/parsing.c \
+	./src/textures.c \
+	./src/utils.c
+
 
 # ----RULES-----
 

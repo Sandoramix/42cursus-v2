@@ -1,32 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sl_enemies.c                                       :+:      :+:    :+:   */
+/*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
+/*   By: odudniak <odudniak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/24 19:15:17 by odudniak          #+#    #+#             */
-/*   Updated: 2023/12/28 20:28:44 by odudniak         ###   ########.fr       */
+/*   Updated: 2025/07/05 00:59:00 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <so_long.h>
-
-void	sl_add_enemy(t_meta *meta, int x, int y)
-{
-	t_point	*point;
-
-	point = ft_calloc(1, sizeof(t_point));
-	if (!point)
-	{
-		ft_printf("FAILED TO ADD ENEMY MOVEMENT HANDLING at x[%d] y[%d]", x, y);
-		ft_printf(COLOR_YELLOW"\nIt wont be able to move :)\n"CR);
-		return ;
-	}
-	point->x = x;
-	point->y = y;
-	ft_lstadd_back(&meta->enemies_pos, ft_lstnew(point));
-}
 
 /**
  * `true` = can move, `false` = cannot
@@ -39,7 +23,7 @@ static bool	move_enemy(char **map, t_meta *meta, t_point *curr)
 
 	choice = rand() % 4;
 	newpos = (t_point){curr->x + all[choice][0], curr->y + all[choice][1]};
-	if (!sl_enemy_canmove(map, *meta, newpos))
+	if (!can_enemy_movehere(map, *meta, newpos))
 		return (false);
 	map[curr->y][curr->x] = FLOOR;
 	*(curr) = newpos;
@@ -66,4 +50,20 @@ void	sl_move_enemies(t_game *game)
 		tries = 0;
 		enemy = enemy->next;
 	}
+}
+
+void	sl_add_enemy(t_meta *meta, int x, int y)
+{
+	t_point	*point;
+
+	point = ft_calloc(1, sizeof(t_point));
+	if (!point)
+	{
+		ft_printf("FAILED TO ADD ENEMY MOVEMENT HANDLING at x[%d] y[%d]", x, y);
+		ft_printf(COLOR_YELLOW"\nIt wont be able to move :)\n"CR);
+		return ;
+	}
+	point->x = x;
+	point->y = y;
+	ft_lstadd_back(&meta->enemies_pos, ft_lstnew(point));
 }

@@ -1,32 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sl_events.c                                        :+:      :+:    :+:   */
+/*   mlx_events.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odudniak <odudniak@student.42firenze.it    +#+  +:+       +#+        */
+/*   By: odudniak <odudniak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/20 19:26:27 by odudniak          #+#    #+#             */
-/*   Updated: 2023/12/28 20:48:41 by odudniak         ###   ########.fr       */
+/*   Updated: 2025/07/05 01:00:44 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <so_long.h>
 
-int	sl_ondestroy(t_game *game)
+int	sl_cleanup(t_game *game, bool should_exit, int status)
 {
-	const int	status = !game->mlx;
-
 	ft_freemtx(game->map, game->meta.map.size.y);
 	ft_lstclear(&game->meta.enemies_pos, &free);
-	if (!status)
+	if (game->mlx != NULL)
 	{
-		sl_destroytextures(game);
+		destroy_textures(game);
 		mlx_clear_window(game->mlx, game->window);
 		mlx_destroy_window(game->mlx, game->window);
 		mlx_destroy_display(game->mlx);
 		free(game->mlx);
 	}
-	exit(status);
+	if (should_exit)
+		exit(status);
+	return (status);
+}
+
+int	sl_ondestroy(t_game *game)
+{
+	sl_cleanup(game, true, 0);
 	return (status);
 }
 
@@ -35,7 +40,7 @@ static t_point	get_nextmove(t_game *game, int key)
 	t_point				nextmove;
 
 	nextmove = game->meta.position;
-	if (!sl_knownkey(key))
+	if (!is_known_key(key))
 		return (nextmove);
 	if (key == SL_UP)
 		nextmove.y--;
@@ -60,11 +65,11 @@ int	sl_onkeypressed(int key, t_game *game)
 	t_point		nextmove;
 
 	if (key == SL_QUIT)
-		return (sl_ondestroy(game));
+		return (sl_cleanup(game, true, 0));
 	nextmove = get_nextmove(game, key);
 	currpos = &game->meta.position;
-	if (!sl_knownkey(key) || game->meta.dead
-		|| !sl_player_canmove(game->map, game->meta, nextmove))
+	if (!is_known_key(key) || game->meta.dead
+		|| !can_player_movehere(game->map, game->meta, nextmove))
 		return (0);
 	game->meta.moves++;
 	game->map[currpos->y][currpos->x] = FLOOR;
