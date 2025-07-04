@@ -6,7 +6,7 @@
 /*   By: odudniak <odudniak@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/20 19:26:27 by odudniak          #+#    #+#             */
-/*   Updated: 2025/07/05 01:00:44 by odudniak         ###   ########.fr       */
+/*   Updated: 2025/07/05 01:14:41 by odudniak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	sl_cleanup(t_game *game, bool should_exit, int status)
 int	sl_ondestroy(t_game *game)
 {
 	sl_cleanup(game, true, 0);
-	return (status);
+	return (0);
 }
 
 static t_point	get_nextmove(t_game *game, int key)

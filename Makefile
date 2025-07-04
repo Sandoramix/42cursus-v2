@@ -32,6 +32,7 @@ RM=rm -rf
 all: $(NAME)
 
 $(NAME): $(SRC)
+	@[ -d $(MLX_DIR) ] || $(MAKE) download-mlx
 	$(MAKE) -C $(LIBFTX_DIR)
 	$(MAKE) -sC $(MLX_DIR) && echo "$(GREEN)[MLX]:\t\tLIBRARY CREATED"
 	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) -L$(LIBFTX_DIR) -lft -L$(MLX_DIR) -lmlx_$(shell uname) -lXext -lX11 -o $@
